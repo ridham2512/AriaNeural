@@ -138,4 +138,4 @@ Change model in `.env` → `GROQ_MODEL=model-name-here`
 
 ---
 
-Built with ❤️ | Powered by FREE Groq AI
+

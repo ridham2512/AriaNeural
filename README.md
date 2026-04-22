@@ -1,4 +1,4 @@
-# ✨ ARIA — AI Research & Intelligence Assistant
+# ✨ ARIA NEURAL - AI ASSITANT
 ### 100% FREE — No credit card needed!
 
 A production-ready full-stack MERN AI Assistant using **Groq (Llama 3.3)** — a completely free AI API that's actually faster than ChatGPT.

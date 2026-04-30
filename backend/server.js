@@ -9,13 +9,10 @@ const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
-
 // Load environment variables
 dotenv.config();
-
 // Connect to MongoDB
 connectDB();
-
 const app = express();
 const server = http.createServer(app);
 
@@ -39,7 +36,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
 // ── Routes ───────────────────────────────────
 app.use('/api/auth',  require('./routes/authRoutes'));

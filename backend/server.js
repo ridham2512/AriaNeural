@@ -9,18 +9,30 @@ const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
+
 // Load environment variables
 dotenv.config();
+
 // Connect to MongoDB
 connectDB();
+
 const app = express();
 const server = http.createServer(app);
+
+// ── Allowed Origins ──────────────────────────
+// This allows both your local computer AND your Vercel deployment to talk to the backend.
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://aria-neural-5z89.vercel.app',
+  process.env.CLIENT_URL // Keeps your env variable option open just in case
+];
 
 // ── Socket.IO setup ──────────────────────────
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
+    credentials: true
   },
 });
 
@@ -31,7 +43,13 @@ app.use((req, _res, next) => {
 });
 
 // ── Middleware ───────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+// Update CORS to accept the Vercel URL
+app.use(cors({ 
+    origin: allowedOrigins, 
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -39,7 +57,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
 // ── Routes ───────────────────────────────────
-app.use('/api/auth',  require('./routes/authRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/chats', require('./routes/chatRoutes'));
 app.use('/api/files', require('./routes/fileRoutes'));
 
@@ -66,5 +84,5 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📦 Environment: ${process.env.NODE_ENV}`);
+  console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
